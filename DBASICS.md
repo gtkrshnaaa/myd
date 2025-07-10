@@ -1,6 +1,3 @@
-
------
-
 ## Dlang Fundamentals: Basic Logic & Modularity
 
 Dlang is a powerful and flexible language. For us "tech artisans," understanding its fundamental logic and how it supports modularity is key to writing clean, efficient, and maintainable code.
@@ -205,16 +202,6 @@ dmd main_app.d math_operations.d
 ./main_app
 ```
 
-Using DUB (Dlang Universal Build system) is generally easier for projects:
-
-```bash
-mkdir my_modular_project
-cd my_modular_project
-dub init
-# (Then edit source/app.d and create source/math_operations.d)
-dub run
-```
-
 #### c. Module Declaration (`module` keyword)
 
 Every `.d` file *should* have a `module` declaration on the first line. While optional for `main` modules or those not part of a package, it's highly recommended for consistency and clarity, especially as your projects grow.
@@ -279,6 +266,239 @@ void main() {
 ```
 
 When importing, you can use `import helpers.string_utils;` to import the entire module. If you only want to import specific functions and use them directly without the full module prefix, you can do `import helpers.string_utils : capitalize;`.
+
+-----
+
+### 3\. Functions in Dlang
+
+**Functions** are like "building blocks" in our code, grouping instructions to perform specific tasks. With functions, code becomes more organized, reusable, and easier to maintain.
+
+#### a. Basic Function Declaration
+
+Dlang has clear syntax for function declarations, similar to other languages like C/C++ or Java. You need to specify the return type (if any), the function name, and parameters (if any).
+
+```d
+import std.stdio;
+
+void sayHello() {
+    writeln("Hello, tech artisan!");
+}
+
+void greetUser(string name) {
+    writeln("Hi, ", name, "! Welcome to the world of Dlang.");
+}
+
+int addNumbers(int a, int b) {
+    return a + b;
+}
+
+auto getMinMax(int[] numbers) {
+    if (numbers.length == 0) {
+        return tuple(int.min, int.max);
+    }
+    int minVal = numbers[0];
+    int maxVal = numbers[0];
+    foreach (num; numbers) {
+        if (num < minVal) {
+            minVal = num;
+        }
+        if (num > maxVal) {
+            maxVal = num;
+        }
+    }
+    return tuple(minVal, maxVal);
+}
+
+void main() {
+    sayHello();
+    greetUser("Arctian");
+
+    int result = addNumbers(20, 15);
+    writeln("Addition result: ", result);
+
+    int[] data = [5, 1, 9, 3, 7];
+    auto minMax = getMinMax(data);
+    writeln("Minimum value: ", minMax[0]);
+    writeln("Maximum value: ", minMax[1]);
+}
+```
+
+#### b. Function Overloading
+
+Dlang allows you to have multiple functions with the same name but different signatures (parameter types and count). This is called **Function Overloading**.
+
+```d
+import std.stdio;
+
+int sum(int a, int b) {
+    return a + b;
+}
+
+int sum(int a, int b, int c) {
+    return a + b + c;
+}
+
+string sum(string s1, string s2) {
+    return s1 ~ s2;
+}
+
+void main() {
+    writeln("Sum int (2 params): ", sum(5, 3));
+    writeln("Sum int (3 params): ", sum(1, 2, 3));
+    writeln("Sum string: ", sum("Hello, ", "Dlang!"));
+}
+```
+
+-----
+
+### 4\. Object-Oriented Programming (OOP) in Dlang
+
+As programmers familiar with various environments, you're definitely acquainted with **OOP** concepts. Dlang fully supports the OOP paradigm with **classes**, **objects**, **inheritance**, **polymorphism**, and **encapsulation**. This is crucial for building complex yet structured applications.
+
+#### a. Classes and Objects
+
+  * A **Class** is a blueprint for objects. It defines properties (data, called **fields** or **members**) and behaviors (functions, called **methods**).
+  * An **Object** is an instance of a class.
+
+<!-- end list -->
+
+```d
+import std.stdio;
+
+class Car {
+    string brand;
+    string model;
+    int year;
+
+    this(string brand, string model, int year) {
+        this.brand = brand;
+        this.model = model;
+        this.year = year;
+        writeln("A ", brand, " ", model, " car is created.");
+    }
+
+    void displayInfo() {
+        writeln("Brand: ", brand);
+        writeln("Model: ", model);
+        writeln("Year: ", year);
+    }
+
+    void startEngine() {
+        writeln("The ", brand, " ", model, " engine starts. Vroom!");
+    }
+}
+
+void main() {
+    Car myCar = new Car("Toyota", "Camry", 2022);
+    Car anotherCar = new Car("Honda", "Civic", 2023);
+
+    writeln("\n--- First Car Info ---");
+    myCar.displayInfo();
+    myCar.startEngine();
+
+    writeln("\n--- Second Car Info ---");
+    anotherCar.displayInfo();
+}
+```
+
+#### b. Inheritance
+
+**Inheritance** is a concept where one class can inherit properties and methods from another class. The inheriting class is called a **derived class** or **subclass**, and the class being inherited from is called a **base class** or **superclass**. This promotes *code reusability*.
+
+```d
+import std.stdio;
+
+class Vehicle {
+    string type;
+
+    this(string type) {
+        this.type = type;
+        writeln("A ", type, " is created.");
+    }
+
+    void honk() {
+        writeln("Beep beep!");
+    }
+}
+
+class Bicycle : Vehicle {
+    int numGears;
+
+    this(string type, int numGears) {
+        super(type);
+        this.numGears = numGears;
+        writeln("A bicycle with ", numGears, " gears is created.");
+    }
+
+    void ringBell() {
+        writeln("Kling kling!");
+    }
+
+    override void honk() {
+        writeln("Bicycles don't honk, they ring!");
+    }
+}
+
+void main() {
+    Vehicle generalVehicle = new Vehicle("General Vehicle");
+    generalVehicle.honk();
+
+    writeln("\n--- Bicycle Info ---");
+    Bicycle myBicycle = new Bicycle("Mountain Bike", 21);
+    myBicycle.ringBell();
+    myBicycle.honk();
+    writeln("Bicycle vehicle type: ", myBicycle.type);
+}
+```
+
+#### c. Polymorphism
+
+**Polymorphism** means "many forms." In OOP, it allows objects of different classes to be treated as objects of a common base class, as long as they share a common interface. This is often achieved through *method overriding* and *abstract classes* or *interfaces*.
+
+```d
+import std.stdio;
+
+abstract class Shape {
+    abstract double getArea();
+
+    void describe() {
+        writeln("This is a geometric shape.");
+    }
+}
+
+class Circle : Shape {
+    double radius;
+    this(double radius) {
+        this.radius = radius;
+    }
+    override double getArea() {
+        return 3.14159 * radius * radius;
+    }
+}
+
+class Rectangle : Shape {
+    double width;
+    double height;
+    this(double width, double height) {
+        this.width = width;
+        this.height = height;
+    }
+    override double getArea() {
+        return width * height;
+    }
+}
+
+void main() {
+    Shape myCircle = new Circle(5.0);
+    Shape myRectangle = new Rectangle(4.0, 6.0);
+
+    writeln("Circle Area: ", myCircle.getArea());
+    writeln("Rectangle Area: ", myRectangle.getArea());
+    
+    myCircle.describe();
+    myRectangle.describe();
+}
+```
 
 -----
 
